@@ -1,0 +1,3 @@
+[submodule "ledutils"]
+	path = ledutils
+	url = git@github.com:schinken/py-ledutils.git
