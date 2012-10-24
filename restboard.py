@@ -5,7 +5,7 @@ import threading
 
 app = Flask(__name__)
 
-send_msg_lock = threading.Semaphore(4)
+send_msg_lock = threading.Lock()
 
 class SendMessage(threading.Thread):
 
@@ -18,15 +18,16 @@ class SendMessage(threading.Thread):
 
     def run(self):
 
-        if not self.lock.acquire(False):
-            return False
+        self.lock.acquire()
 
         ll = ledloard.Client(settings.ledloard_host, settings.ledloard_port)
-        ll.set_priority(ledloard.Client.PRIO_HIGH)
+        ll.set_priority(ledloard.Client.PRIO_GOD)
         
         dw = textutil.DrawText(self.message, settings.font_list[self.font])
         for frame_index in xrange(dw.get_frame_count()):
             ll.write_frame(dw.get_frame(frame_index), 96, 16)
+
+        self.lock.release()
 
 
 @app.route("/send_text")
@@ -41,4 +42,4 @@ def send_message():
 
 if __name__ == '__main__':
     app.debug = True
-    app.run( )
+    app.run(host='0.0.0.0')
