@@ -32,12 +32,16 @@ class SendMessage(threading.Thread):
 
 @app.route("/send_text")
 def send_message():
-    message = request.values.get('message')
-    font = request.values.get('font', settings.font_default)
+    message = request.values.get('message', False)
 
-    SendMessage(message, font, send_msg_lock).start()
+    if message:
+        font = request.values.get('font', settings.font_default)
+        SendMessage(message, font, send_msg_lock).start()
 
-    return "ok"
+        return "ok"
+    else:
+        return "fail"
+
 
 
 if __name__ == '__main__':
