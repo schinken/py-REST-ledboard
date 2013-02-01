@@ -29,7 +29,7 @@ class SendMessage(threading.Thread):
 
 
 app = Flask(__name__)
-main_queue = Queue.Queue()
+main_queue = Queue.Queue(10)
 
 message_thread = SendMessage(main_queue)
 message_thread.start()
@@ -46,7 +46,10 @@ def send_message():
         else:
             font = settings.font_list[settings.font_default]
 
-        main_queue.put([message, font])
+        try:
+            main_queue.put_nowait([message, font])
+        except Queue.Full:
+            return "queue is full. please try again later"
 
         return "ok"
     else:
