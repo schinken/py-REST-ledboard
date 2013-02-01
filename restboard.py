@@ -23,6 +23,8 @@ class SendMessage(threading.Thread):
             for frame_index in xrange(dw.get_frame_count()):
                 ll.write_frame(dw.get_frame(frame_index), 96, 16)
 
+            ll.disconnect()
+
             self.queue.task_done()
 
 
